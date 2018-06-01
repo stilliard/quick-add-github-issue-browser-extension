@@ -1,21 +1,6 @@
 
-
-//
-// example to get current page/tab URL
-//
-// chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-//     var url = tabs[0].url;
-
-//     console.log('You\'re on:', url);
-// });
-
-// idea for getting screenshot -> https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/captureVisibleTab
-
-
 // When showing the settings screen
 Screen.onShow('settings', function ($screen) {
-
-    console.log('settings screen');
 
     // hook into save button click
     $screen.on('submit', '#settings-form', function (e) {
@@ -33,8 +18,6 @@ Screen.onShow('settings', function ($screen) {
 
 // When showing the report-issue screen
 Screen.onShow('report-issue', function ($screen) {
-
-    console.log('report screen');
 
     // get token
     Settings.get(function (store) {
@@ -85,14 +68,54 @@ Screen.onShow('report-issue', function ($screen) {
             var title = $screen.find('#title').val(),
                 repo = $screen.find('#repo').val(),
                 project = $screen.find('#project').val(),
-                extraParams = project ? '&projects=' + encodeURIComponent(project) : '',
-                url = 'https://github.com/' + repo + '/issues/new?title=' + encodeURIComponent(title) + extraParams;
+                added_url = $screen.find('#added_url').prop('checked'),
+                added_screenshot = $screen.find('#added_screenshot').prop('checked'),
+                added_debug = $screen.find('#added_debug').prop('checked'),
+                body = '',
+                url = 'https://github.com/' + repo + '/issues/new?title=' + encodeURIComponent(title);
+
+            // build up extra params (ref https://help.github.com/articles/about-automation-for-issues-and-pull-requests-with-query-parameters/)
+            if (project) {
+                url += '&projects=' + encodeURIComponent(project);
+            }
 
             // redirect to new issue page for given repo
             chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-                chrome.tabs.update(tabs[0].id, {
-                    url: url
-                });
+
+                // handle sending (delay until added additional data)
+                var sendToGitHub = function () {
+                    if (body) {
+                        url += '&body=' + encodeURIComponent(body);
+                    }
+                    chrome.tabs.update(tabs[0].id, {
+                        url: url
+                    });
+                };
+
+                // add url
+                if (added_url) {
+                    body += "Reported from: " + tabs[0].url + "\n\n";
+                }
+
+                // add debug data
+                if (added_debug) {
+                    body += "### Debug details \n";
+                    body += "User-agent: " + navigator.userAgent + "\n";
+                    body += "Cookies: " + navigator.cookieEnabled + " (DNT: " + navigator.doNotTrack + ")\n";
+                    body += "Date/time: " + Date() + "\n";
+                    body += "\n";
+                }
+
+                // add screenshot link
+                if (added_screenshot) {
+                    chrome.tabs.captureVisibleTab(function (imageUri) {
+                        body += "### Screenshot (drag in the screenshot file)\n\n";
+                        download(imageUri, 'screenshot.png');
+                        sendToGitHub();
+                    });
+                } else {
+                    sendToGitHub();
+                }
             });
 
         });

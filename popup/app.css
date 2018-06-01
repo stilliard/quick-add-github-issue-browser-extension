@@ -4,11 +4,29 @@
 body {
     width: 300px;
     padding: 10px;
+}
+body, input, select {
     font: 14px/1.5 Ubuntu, sans-serif;
 }
 
 input, select {
     width: 100%;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+label.checkbox {
+    display: inline-block;
+    padding: 5px;
+    margin: 1px 0;
+    border: 1px solid #EEE;
+}
+label.checkbox:hover {
+    background-color: #EEE;
+}
+input[type="checkbox"] {
+    width: auto;
+    vertical-align: text-top;
 }
 
 a {

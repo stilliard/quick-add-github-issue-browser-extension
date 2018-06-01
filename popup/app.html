@@ -16,12 +16,13 @@
         <form id="settings-form">
 
             <p>
-                <label for="token">Personal access token:</label>
+                <label for="token">Personal Access Token:</label>
                 <input type="text" name="token" id="token" value="{{token}}" required autofocus>
                 <br>
-                <em>Requires the "repo" &amp; "read:org" permissions/scopes.</em>
+                <em>Requires the <strong>"repo"</strong> &amp; <strong>"read:org"</strong> scopes.</em>
                 <br>
-                <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Where do I find this?</a>
+                <a href="https://github.com/settings/tokens" target="_blank">View access tokens</a>
+                | <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Help</a>
             </p>
 
             <p>
@@ -53,10 +54,18 @@
             </p>
 
             <p id="project-container">
-                <label for="project">Project:</label>
+                <label for="project">Org Project:</label>
                 <select name="project" id="project">
                     <option>loading...</option>
                 </select>
+            </p>
+
+            <p>
+                Additional data:
+                <br>
+                <label class="checkbox"><input type="checkbox" name="added_url" id="added_url"> URL</label>
+                <label class="checkbox"><input type="checkbox" name="added_screenshot" id="added_screenshot"> Screenshot</label>
+                <label class="checkbox"><input type="checkbox" name="added_debug" id="added_debug"> Debug Data</label>
             </p>
 
             <p><input type="submit" value="Continue"></p>
@@ -70,6 +79,7 @@
     <script src="./vendor/GitHub.min.js"></script>
     <script src="./vendor/crypto-js.min.js" charset="UTF-8"></script>
     <script src="./vendor/zepto.min.js"></script>
+    <script src="./vendor/download2.js"></script>
 
     <!-- modules -->
     <script src="./modules/settings.js"></script>
