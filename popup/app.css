@@ -15,18 +15,22 @@ input, select {
     box-sizing: border-box;
 }
 
-label.checkbox {
+label.checkbox-label {
     display: inline-block;
     padding: 5px;
     margin: 1px 0;
     border: 1px solid #EEE;
 }
-label.checkbox:hover {
+label.checkbox-label:hover {
     background-color: #EEE;
 }
-input[type="checkbox"] {
-    width: auto;
-    vertical-align: text-top;
+
+.hidden-checkbox {
+    display: none;
+}
+.hidden-checkbox:checked + label.checkbox-label {
+    background-color: lightseagreen;
+    color: #FFF;
 }
 
 a {

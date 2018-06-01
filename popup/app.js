@@ -71,6 +71,7 @@ Screen.onShow('report-issue', function ($screen) {
                 added_url = $screen.find('#added_url').prop('checked'),
                 added_screenshot = $screen.find('#added_screenshot').prop('checked'),
                 added_debug = $screen.find('#added_debug').prop('checked'),
+                type_field = $screen.find('#type_field input[name="type"]:checked').val(),
                 body = '',
                 url = 'https://github.com/' + repo + '/issues/new?title=' + encodeURIComponent(title);
 
@@ -91,6 +92,40 @@ Screen.onShow('report-issue', function ($screen) {
                         url: url
                     });
                 };
+
+                // add type/label + standard template ;D
+                if (type_field) {
+                    url += '&labels=' + encodeURIComponent(type_field);
+
+                    if (type_field=='bug') {
+                        body += "## Issue description:\n";
+                        body += "\n";
+                        body += "As a User/Admin/Developer\n";
+                        body += "When I <steps to reproduce>\n";
+                        body += "Currently it <what happens currently>\n";
+                        body += "While it should <what should happen>\n";
+                        body += "Because <some business value>\n";
+                        body += "\n\n";
+                    }
+                    else if (type_field=='enhancement') {
+                        body += "## Story / Description:\n";
+                        body += "\n";
+                        body += "As a User/Admin/Developer\n";
+                        body += "I want <some software feature>\n";
+                        body += "So that <some business value>\n";
+                        body += "\n";
+                        body += "<any additional notes for clarification>\n";
+                        body += "\n";
+                        body += "## Requirements\n";
+                        body += "\n";
+                        body += "- list them here\n";
+                        body += "\n";
+                        body += "## Tasks / TODO\n";
+                        body += "\n";
+                        body += "- [ ] with checklists\n";
+                        body += "\n\n";
+                    }
+                }
 
                 // add url
                 if (added_url) {

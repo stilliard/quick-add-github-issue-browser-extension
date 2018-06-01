@@ -60,12 +60,33 @@
                 </select>
             </p>
 
-            <p>
-                Additional data:
+            <p id="type_field">
+                Issue Type:
                 <br>
-                <label class="checkbox"><input type="checkbox" name="added_url" id="added_url"> URL</label>
-                <label class="checkbox"><input type="checkbox" name="added_screenshot" id="added_screenshot"> Screenshot</label>
-                <label class="checkbox"><input type="checkbox" name="added_debug" id="added_debug"> Debug Data</label>
+                <input type="radio" value="bug" name="type" id="type_bug" class="hidden-checkbox" checked>
+                <label class="checkbox-label" for="type_bug">Bug</label>
+
+                <input type="radio" value="enhancement" name="type" id="type_enhancement" class="hidden-checkbox">
+                <label class="checkbox-label" for="type_enhancement">Enhancement</label>
+
+                <input type="radio" value="question" name="type" id="type_question" class="hidden-checkbox">
+                <label class="checkbox-label" for="type_question">Question</label>
+
+                <input type="radio" value="" name="type" id="type_other" class="hidden-checkbox">
+                <label class="checkbox-label" for="type_other">Other</label>
+            </p>
+
+            <p>
+                Additional Data:
+                <br>
+                <input type="checkbox" value="1" name="added_url" id="added_url" class="hidden-checkbox">
+                <label class="checkbox-label" for="added_url">URL</label>
+
+                <input type="checkbox" value="1" name="added_screenshot" id="added_screenshot" class="hidden-checkbox">
+                <label class="checkbox-label" for="added_screenshot">Screenshot</label>
+
+                <input type="checkbox" value="1" name="added_debug" id="added_debug" class="hidden-checkbox">
+                <label class="checkbox-label" for="added_debug">Debug Data</label>
             </p>
 
             <p><input type="submit" value="Continue"></p>
