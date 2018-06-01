@@ -1,0 +1,22 @@
+
+* { margin: 0; padding: 0; }
+
+body {
+    width: 300px;
+    padding: 10px;
+    font: 14px/1.5 Ubuntu, sans-serif;
+}
+
+input, select {
+    width: 100%;
+}
+
+a {
+    text-decoration: underline;
+    color: lightseagreen;
+    cursor: pointer;
+}
+
+p {
+    margin-bottom: 15px;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue</title>
+    <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+
+    <!-- display screen templates here -->
+    <div id="screen"></div>
+
+    <!-- settings screen -->
+    <script type="text/x-handlebars-template" id="settings-template">
+        <form id="settings-form">
+
+            <p>
+                <label for="token">Personal access token:</label>
+                <input type="text" name="token" id="token" value="{{token}}" required autofocus>
+                <br>
+                <em>Requires the "repo" &amp; "read:org" permissions/scopes.</em>
+                <br>
+                <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Where do I find this?</a>
+            </p>
+
+            <p>
+                <label for="org">Org name:</label>
+                <input type="text" name="org" id="org" value="{{org}}" placeholder="(optional)">
+                <br>
+                <em>e.g. github.com/<strong>MyCompany</strong>/repo. Leave blank to use your own user instead.</em>
+            </p>
+
+            <p><input type="submit" value="Save"></p>
+
+        </form>
+    </script>
+
+    <!-- report-issue screen -->
+    <script type="text/x-handlebars-template" id="report-issue-template">
+        <form id="report-issue-form">
+
+            <p>
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" placeholder="Title your issue" required autofocus>
+            </p>
+
+            <p>
+                <label for="repo">Repo:</label>
+                <select name="repo" id="repo" required>
+                    <option>loading...</option>
+                </select>
+            </p>
+
+            <p id="project-container">
+                <label for="project">Project:</label>
+                <select name="project" id="project">
+                    <option>loading...</option>
+                </select>
+            </p>
+
+            <p><input type="submit" value="Continue"></p>
+
+        </form>
+
+        <a id="settings-link">View Your Settings</a>
+    </script>
+
+    <!-- libs -->
+    <script src="./vendor/GitHub.min.js"></script>
+    <script src="./vendor/crypto-js.min.js" charset="UTF-8"></script>
+    <script src="./vendor/zepto.min.js"></script>
+
+    <!-- modules -->
+    <script src="./modules/settings.js"></script>
+    <script src="./modules/screen.js"></script>
+
+    <!-- start the app -->
+    <script src="./app.js"></script>
+
+</body>
+</html>

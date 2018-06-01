@@ -1,0 +1,14 @@
+{
+    "manifest_version": 2,
+    "name": "quick-add-github-issue",
+    "version": "1.0",
+    "browser_action": {
+      "browser_style": true,
+      "default_icon": {
+        "48": "images/button-48.png",
+        "96": "images/button-96.png"
+      },
+      "default_popup": "popup/app.html"
+    },
+    "permissions": ["activeTab", "tabs", "storage"]
+  }
