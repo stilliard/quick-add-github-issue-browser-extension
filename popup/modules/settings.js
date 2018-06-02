@@ -9,7 +9,7 @@
 window.Settings = (function () {
 
     var cachedData = null,
-        secret = 'beepboop72';
+        secret = '';
 
     function encrypt(data) {
         return window.CryptoJS.AES.encrypt(JSON.stringify(data), secret).toString();
@@ -19,6 +19,11 @@ window.Settings = (function () {
     }
 
     return {
+
+        // set encryption secret
+        setSecret: function (newSecret) {
+            secret = newSecret;
+        },
 
         // get
         // @param {Function} callback gets given the settings Object
