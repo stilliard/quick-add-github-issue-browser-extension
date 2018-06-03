@@ -35,4 +35,4 @@ A few ideas:
 
 Current icon from: https://octicons.github.com/icon/report/
 
-**Contributions welcome :)**
+**[Contributions welcome](https://github.com/stilliard/quick-add-github-issue-browser-extension) :)**
