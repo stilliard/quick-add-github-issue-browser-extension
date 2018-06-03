@@ -50,7 +50,7 @@ Screen.onShow('report-issue', function ($screen) {
                 var list = projects.map(function (project) {
                     return '<option value="' + store.org + '/' + project.number + '">' + project.name + '</option>';
                 });
-                $screen.find('#project').html(list + '<option>~ None ~</option>');
+                $screen.find('#project').html('<option>~ optional ~</option>' + list);
             });
         }
 
