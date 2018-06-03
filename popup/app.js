@@ -29,7 +29,7 @@ Screen.onShow('report-issue', function ($screen) {
         var org = store.org ? gh.getOrganization(store.org) : gh.getUser();
         (store.org ? org.getRepos : org.listRepos).call(org, function(err, repos) {
             if (err) {
-                console.error(err);
+                alert(err);
                 return;
             }
             var list = repos.map(function (repo) {
@@ -44,7 +44,7 @@ Screen.onShow('report-issue', function ($screen) {
         } else {
             org.listProjects(function(err, projects) {
                 if (err) {
-                    console.error(err);
+                    alert(err);
                     return;
                 }
                 var list = projects.map(function (project) {
