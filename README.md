@@ -7,6 +7,9 @@
 
 Supports Chrome & Firefox.
 
+- [Chrome Extension](https://chrome.google.com/webstore/detail/quick-add-issue-to-github/mgamfhobfmlghohfjdiecjhddoigenkk)
+- [Firefox Addon](https://addons.mozilla.org/en-GB/firefox/addon/quick-add-issue-to-github/)
+
 Features:
 - Sending issues to github
 - Select a repo based on your user or set a specific org.
@@ -17,11 +20,6 @@ Features:
 - Url & debug info (such as browser UA, etc.)
 
 ------
-
-Next TODOs for me:
-
-- [ ] submit to chrome webstore
-- [ ] submit to firefox addons site
 
 A few ideas:
 
