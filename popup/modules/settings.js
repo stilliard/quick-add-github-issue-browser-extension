@@ -15,7 +15,9 @@ window.Settings = (function () {
         return window.CryptoJS.AES.encrypt(JSON.stringify(data), secret).toString();
     }
     function decrypt(str) {
-        return JSON.parse(window.CryptoJS.AES.decrypt(str.toString(), secret).toString(window.CryptoJS.enc.Utf8));
+        var data = window.CryptoJS.AES.decrypt(str.toString(), secret).toString(window.CryptoJS.enc.Utf8);
+        if (! data) return {};
+        return JSON.parse(data);
     }
 
     return {
