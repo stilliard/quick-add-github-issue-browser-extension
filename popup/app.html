@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Issue</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="./app.css">
 </head>
 <body>
@@ -19,7 +20,7 @@
                 <label for="token">Personal Access Token:</label>
                 <input type="text" name="token" id="token" value="{{token}}" required autofocus>
                 <br>
-                <em>Requires the <strong>"repo"</strong> &amp; <strong>"read:org"</strong> scopes.</em>
+                <em>Requires <strong>"repo"</strong> &amp; <strong>"read:org"</strong> scopes.</em>
                 <br>
                 <a href="https://github.com/settings/tokens" target="_blank">View access tokens</a>
                 | <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Help</a>
@@ -29,7 +30,7 @@
                 <label for="org">Org name:</label>
                 <input type="text" name="org" id="org" value="{{org}}" placeholder="(optional)">
                 <br>
-                <em>e.g. github.com/<strong>MyCompany</strong>/repo. Leave blank to use your own user instead.</em>
+                <em>e.g. github.com/<strong>MyCompany</strong>/repo. Leave blank to use your user instead.</em>
             </p>
 
             <p><input type="submit" value="Save"></p>
@@ -61,32 +62,32 @@
             </p>
 
             <p id="type_field">
-                Issue Type:
+                <label>Issue Type:</label>
                 <br>
                 <input type="radio" value="bug" name="type" id="type_bug" class="hidden-checkbox" checked>
-                <label class="checkbox-label" for="type_bug">Bug</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_bug">Bug</label>
 
                 <input type="radio" value="enhancement" name="type" id="type_enhancement" class="hidden-checkbox">
-                <label class="checkbox-label" for="type_enhancement">Enhancement</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_enhancement">Enhancement</label>
 
                 <input type="radio" value="question" name="type" id="type_question" class="hidden-checkbox">
-                <label class="checkbox-label" for="type_question">Question</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_question">Question</label>
 
                 <input type="radio" value="" name="type" id="type_other" class="hidden-checkbox">
-                <label class="checkbox-label" for="type_other">Other</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_other">Other</label>
             </p>
 
             <p>
-                Additional Data:
+                <label>Additional Data:</label>
                 <br>
                 <input type="checkbox" value="1" name="added_url" id="added_url" class="hidden-checkbox">
-                <label class="checkbox-label" for="added_url">URL</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="added_url">URL</label>
 
                 <input type="checkbox" value="1" name="added_screenshot" id="added_screenshot" class="hidden-checkbox">
-                <label class="checkbox-label" for="added_screenshot">Screenshot</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="added_screenshot">Screenshot</label>
 
                 <input type="checkbox" value="1" name="added_debug" id="added_debug" class="hidden-checkbox">
-                <label class="checkbox-label" for="added_debug">Debug Data</label>
+                <label tabindex="0" role="button" class="hidden-checkbox-label" for="added_debug">Debug Data</label>
             </p>
 
             <p><input type="submit" value="Continue"></p>
@@ -105,6 +106,7 @@
     <!-- modules -->
     <script src="./modules/settings.js"></script>
     <script src="./modules/screen.js"></script>
+    <script src="./modules/hidden-checkbox.js"></script>
 
     <!-- start the app -->
     <script src="./config.js"></script>

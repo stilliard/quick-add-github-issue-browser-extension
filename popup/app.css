@@ -6,31 +6,7 @@ body {
     padding: 10px;
 }
 body, input, select {
-    font: 14px/1.5 Ubuntu, sans-serif;
-}
-
-input, select {
-    width: 100%;
-    padding: 2px;
-    box-sizing: border-box;
-}
-
-label.checkbox-label {
-    display: inline-block;
-    padding: 5px;
-    margin: 1px 0;
-    border: 1px solid #EEE;
-}
-label.checkbox-label:hover {
-    background-color: #EEE;
-}
-
-.hidden-checkbox {
-    display: none;
-}
-.hidden-checkbox:checked + label.checkbox-label {
-    background-color: lightseagreen;
-    color: #FFF;
+    font: 14px/1.5 'Open Sans', sans-serif;
 }
 
 a {
@@ -41,4 +17,32 @@ a {
 
 p {
     margin-bottom: 15px;
+}
+
+label {
+    user-select: none;
+}
+
+input, select {
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+label.hidden-checkbox-label {
+    display: inline-block;
+    padding: 5px;
+    margin: 1px 0;
+    border: 1px solid #EEE;
+}
+label.hidden-checkbox-label:hover {
+    background-color: #EEE;
+}
+
+.hidden-checkbox {
+    display: none;
+}
+.hidden-checkbox:checked + label.hidden-checkbox-label {
+    background-color: lightseagreen;
+    color: #FFF;
 }
