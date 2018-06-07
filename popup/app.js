@@ -88,7 +88,7 @@ Screen.onShow('report-issue', function ($screen) {
                     if (body) {
                         url += '&body=' + encodeURIComponent(body);
                     }
-                    chrome.tabs.update(tabs[0].id, {
+                    chrome.tabs.create({
                         url: url
                     });
                 };
