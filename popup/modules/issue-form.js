@@ -13,39 +13,40 @@ window.IssueForm = (function () {
 
         init: function ($screen) {
 
-            // restore field state
             chrome.storage.local.get(['fields'], function (result) {
-                if (! result.fields) {
-                    return;
+
+                // restore field state
+                if (result.fields) {
+                    fields = JSON.parse(result.fields);
+                    $screen.find('select').each(function () {
+                        var $input = $(this),
+                            val = fields[$input.attr('name')];
+                        if (val != undefined) {
+                            $input.val(val).trigger('change');
+                        }
+                    });
+                    $screen.find('input[type="radio"]').each(function () {
+                        var $input = $(this),
+                            val = fields[$input.attr('name')];
+                        if (val != undefined) {
+                            $input.filter('#' + val).prop('checked', true);
+                        }
+                    });
                 }
-                fields = JSON.parse(result.fields);
-                $screen.find('select').each(function () {
-                    var $input = $(this),
-                        val = fields[$input.attr('id')];
-                    if (val) {
-                        $input.val(fields[$input.attr('id')]);
-                    }
+
+                // watch for field changes
+                $screen.find('select').on('change', function () {
+                    var $input = $(this);
+                    fields[$input.attr('name')] = $input.val();
+                    chrome.storage.local.set({ fields: JSON.stringify(fields) });
                 });
-                $screen.find('input[type="radio"]').each(function () {
-                    var $input = $(this),
-                        val = fields[$input.attr('id')];
-                    if (val) {
-                        $input.prop('checked', val);
-                    }
+                $screen.find('input[type="radio"]').on('change', function () {
+                    var $input = $(this);
+                    fields[$input.attr('name')] = $input.attr('id');
+                    chrome.storage.local.set({ fields: JSON.stringify(fields) });
                 });
             });
 
-            // watch for field changes
-            $screen.find('select').on('change', function () {
-                var $input = $(this);
-                fields[$input.attr('id')] = $input.val();
-                chrome.storage.local.set({ fields: JSON.stringify(fields) });
-            });
-            $screen.find('input[type="radio"]').on('change', function () {
-                var $input = $(this);
-                fields[$input.attr('id')] = $input.prop('checked');
-                chrome.storage.local.set({ fields: JSON.stringify(fields) });
-            });
         }
 
     }
