@@ -41,6 +41,8 @@ Screen.onShow('report-issue', function ($screen) {
         // projects only supported for org level
         if (! store.org) {
             $screen.find('#project-container').hide();
+
+            IssueForm.init($screen);
         } else {
             org.listProjects(function(err, projects) {
                 if (err) {
@@ -51,6 +53,8 @@ Screen.onShow('report-issue', function ($screen) {
                     return '<option value="' + store.org + '/' + project.number + '">' + project.name + '</option>';
                 });
                 $screen.find('#project').html('<option>~ optional ~</option>' + list);
+
+                IssueForm.init($screen);
             });
         }
 
