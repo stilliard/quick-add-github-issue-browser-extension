@@ -102,7 +102,7 @@ Screen.onShow('report-issue', function ($screen) {
                     url += '&labels=' + encodeURIComponent(type_field);
 
                     if (type_field=='bug') {
-                        body += "## Issue description:\n";
+                        body += "### Issue description:\n";
                         body += "\n";
                         body += "As a User/Admin/Developer\n";
                         body += "When I <steps to reproduce>\n";
@@ -112,17 +112,17 @@ Screen.onShow('report-issue', function ($screen) {
                         body += "\n\n";
                     }
                     else if (type_field=='enhancement') {
-                        body += "## Story:\n";
+                        body += "### Story:\n";
                         body += "\n";
                         body += "As a User/Admin/Developer\n";
                         body += "I want <some software feature>\n";
                         body += "So that <some business value>\n";
                         body += "\n";
-                        body += "## Requirements\n";
+                        body += "### Requirements:\n";
                         body += "\n";
                         body += "- list them here\n";
                         body += "\n";
-                        body += "## Tasks\n";
+                        body += "### Tasks:\n";
                         body += "\n";
                         body += "- [ ] \n";
                         body += "- [ ] \n";
@@ -138,7 +138,7 @@ Screen.onShow('report-issue', function ($screen) {
 
                 // add debug data
                 if (added_debug) {
-                    body += "### Debug details \n";
+                    body += "### Debug details: \n";
                     body += "User-agent: " + navigator.userAgent + "\n";
                     body += "Cookies: " + navigator.cookieEnabled + " (DNT: " + navigator.doNotTrack + ")\n";
                     body += "Date/time: " + Date() + "\n";
@@ -148,7 +148,8 @@ Screen.onShow('report-issue', function ($screen) {
                 // add screenshot link
                 if (added_screenshot) {
                     chrome.tabs.captureVisibleTab(function (imageUri) {
-                        body += "### Screenshot (drag in the screenshot file)\n\n";
+                        body += "### Screenshot:\n\n";
+                        body += "<!-- drag in the screenshot file -->\n\n";
                         download(imageUri, 'screenshot.png');
                         sendToGitHub();
                     });
