@@ -112,21 +112,21 @@ Screen.onShow('report-issue', function ($screen) {
                         body += "\n\n";
                     }
                     else if (type_field=='enhancement') {
-                        body += "## Story / Description:\n";
+                        body += "## Story:\n";
                         body += "\n";
                         body += "As a User/Admin/Developer\n";
                         body += "I want <some software feature>\n";
                         body += "So that <some business value>\n";
                         body += "\n";
-                        body += "<any additional notes for clarification>\n";
-                        body += "\n";
                         body += "## Requirements\n";
                         body += "\n";
                         body += "- list them here\n";
                         body += "\n";
-                        body += "## Tasks / TODO\n";
+                        body += "## Tasks\n";
                         body += "\n";
-                        body += "- [ ] with checklists\n";
+                        body += "- [ ] \n";
+                        body += "- [ ] \n";
+                        body += "- [ ] \n";
                         body += "\n\n";
                     }
                 }
