@@ -151,7 +151,7 @@ Screen.onShow('report-issue', function ($screen) {
                         body += "### Screenshot:\n\n";
                         body += "<!-- drag in the screenshot file -->\n\n";
                         download(imageUri, 'screenshot.png');
-                        sendToGitHub();
+                        setTimeout(sendToGitHub, 300); // small delay to allow download
                     });
                 } else {
                     sendToGitHub();
