@@ -32,10 +32,21 @@ Screen.onShow('report-issue', function ($screen) {
                 alert(err);
                 return;
             }
-            var list = repos.map(function (repo) {
-                return '<option>' + repo.full_name + '</option>';
+
+            var orgs = {};
+            repos.forEach(function (repo) {
+                var orgName = repo.owner.login;
+                orgs[orgName] = orgs[orgName] || [];
+                orgs[orgName].push(repo);
             });
-            $screen.find('#repo').html(list);
+
+            var list = Object.keys(orgs).map(function (org) {
+                var options = orgs[org].map(function (repo) {
+                    return '<option value="' + repo.full_name + '">' + repo.name + '</option>';
+                });
+                return '<optgroup label="' + org + '">' + options.join('') + '</optgroup>';
+            });
+            $screen.find('#repo').html(list.join(''));
         });
 
         // projects only supported for org level
