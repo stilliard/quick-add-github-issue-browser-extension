@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Issue</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="./fonts.css">
     <link rel="stylesheet" href="./app.css">
 </head>
 <body>
@@ -15,6 +15,11 @@
     <!-- settings screen -->
     <script type="text/x-template" id="settings-template">
         <form id="settings-form">
+
+            <header>
+                <a href="https://github.com/" target="_blank" class="logo-img"><img src="./images/github.svg"></a>
+                <h1>Extension Settings</h1>
+            </header>
 
             <p>
                 <label for="token">Personal Access Token:</label>
@@ -42,6 +47,11 @@
     <script type="text/x-template" id="report-issue-template">
         <form id="report-issue-form">
 
+            <header>
+                <a href="https://github.com/" target="_blank" class="logo-img"><img src="./images/github.svg"></a>
+                <h1>Quick Add Issue</h1>
+            </header>
+
             <p>
                 <label for="title">Title:</label>
                 <input type="text" name="title" id="title" placeholder="Title your issue" required autofocus>
@@ -55,14 +65,14 @@
             </p>
 
             <p id="project-container">
-                <label for="project">Org Project:</label>
+                <label for="project">Project:</label>
                 <select name="project" id="project">
                     <option>loading...</option>
                 </select>
             </p>
 
             <p id="type_field">
-                <label>Issue Type:</label>
+                <label>Issue type:</label>
                 <br>
                 <input type="radio" value="bug" name="type" id="type_bug" class="hidden-checkbox" checked>
                 <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_bug">Bug</label>
@@ -70,15 +80,12 @@
                 <input type="radio" value="enhancement" name="type" id="type_enhancement" class="hidden-checkbox">
                 <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_enhancement">Enhancement</label>
 
-                <input type="radio" value="question" name="type" id="type_question" class="hidden-checkbox">
-                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_question">Question</label>
-
                 <input type="radio" value="" name="type" id="type_other" class="hidden-checkbox">
                 <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_other">Other</label>
             </p>
 
             <p>
-                <label>Additional Data:</label>
+                <label>Additional data:</label>
                 <br>
                 <input type="checkbox" value="1" name="added_url" id="added_url" class="hidden-checkbox">
                 <label tabindex="0" role="button" class="hidden-checkbox-label" for="added_url">URL</label>
@@ -94,7 +101,9 @@
 
         </form>
 
-        <a id="settings-link">View Your Settings</a>
+        <div>
+            <a id="settings-link">Extension Settings</a>
+        </div>
     </script>
 
     <!-- libs -->

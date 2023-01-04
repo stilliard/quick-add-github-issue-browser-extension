@@ -1,17 +1,20 @@
 
+/* ==== Base ==== */
+
 * { margin: 0; padding: 0; }
 
 body {
-    width: 300px;
+    width: 360px;
     padding: 10px;
+    background-color: #F6F8FA;
 }
 body, input, select {
-    font: 14px/1.5 'Open Sans', sans-serif;
+    font: 14px/1.5 'Noto Sans', sans-serif;
 }
 
 a {
     text-decoration: underline;
-    color: lightseagreen;
+    color: #0969DA;
     cursor: pointer;
 }
 
@@ -26,23 +29,70 @@ label {
 input, select {
     width: 100%;
     padding: 4px;
+    margin-top: 2px;
     box-sizing: border-box;
+    border-radius: 3px;
+    border: 1px solid #A6ACB2;
 }
 
+input:focus, select:focus, label.hidden-checkbox-label:focus {
+    outline: none;
+    border-color: #0969DA;
+}
+
+input[type="submit"] {
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid #2A9147;
+    background-color: #2DA44E;
+    color: #FFF;
+    cursor: pointer;
+}
+
+/* ==== Layout ==== */
+
+header {
+    margin: -10px;
+    margin-bottom: 15px;
+    background-color: #24292F;
+    padding: 20px 15px;
+}
+header h1 {
+    font-size: 16px;
+    color: #FFF;
+}
+header .logo-img {
+    float: right;
+    color: #FFF;
+    margin-top: -4px;
+}
+
+/* ==== Modules ==== */
+
+/* hidden checkboxes */
 label.hidden-checkbox-label {
     display: inline-block;
-    padding: 5px;
+    padding: 5px 20px;
     margin: 1px 0;
-    border: 1px solid #EEE;
+    border: 1px solid #A6ACB2;
+    border-radius: 3px;
+    cursor: pointer;
 }
 label.hidden-checkbox-label:hover {
     background-color: #EEE;
+    border-color: #8f959b;
 }
 
 .hidden-checkbox {
     display: none;
 }
 .hidden-checkbox:checked + label.hidden-checkbox-label {
-    background-color: lightseagreen;
-    color: #FFF;
+    background-color: #FFF;
+    border-color: #0969DA;
+    color: #0969DA;
+}
+
+/* text center helper */
+.text-center {
+    text-align: center;
 }
