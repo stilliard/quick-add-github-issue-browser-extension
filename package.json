@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "webpack --mode=production",
+    "watch": "webpack --mode=production --watch --progress"
+  },
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
