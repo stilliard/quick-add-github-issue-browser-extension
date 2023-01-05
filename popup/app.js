@@ -1,4 +1,6 @@
 
+const { Octokit } = require("@octokit/rest");
+
 // When showing the settings screen
 Screen.onShow('settings', function ($screen) {
 
@@ -23,49 +25,90 @@ Screen.onShow('report-issue', function ($screen) {
     Settings.get(function (store) {
 
         // lookup GitHub repos list
-        var gh = new GitHub({
-            token: store.token
-        });
-        var org = store.org ? gh.getOrganization(store.org) : gh.getUser();
-        (store.org ? org.getRepos : org.listRepos).call(org, function(err, repos) {
-            if (err) {
-                alert(err);
-                return;
-            }
+        const octokit = new Octokit({ auth: store.token });
+
+        const listRepos = store.org ? octokit.rest.repos.listForOrg : octokit.rest.repos.listForAuthenticatedUser;
+        listRepos({ org: store.org }).then(({ data }) => {
 
             var orgs = {};
-            repos.forEach(function (repo) {
+            data.forEach(function (repo) {
                 var orgName = repo.owner.login;
                 orgs[orgName] = orgs[orgName] || [];
                 orgs[orgName].push(repo);
             });
 
-            var list = Object.keys(orgs).map(function (org) {
-                var options = orgs[org].map(function (repo) {
-                    return '<option value="' + repo.full_name + '">' + repo.name + '</option>';
+            function buildList(orgs) {
+
+                var list = Object.keys(orgs).map(function (org) {
+                    var options = orgs[org].map(function (repo) {
+                        return '<option value="' + repo.full_name + '">' + repo.name + '</option>';
+                    });
+                    return '<optgroup label="' + org + '">' + options.join('') + '</optgroup>';
                 });
-                return '<optgroup label="' + org + '">' + options.join('') + '</optgroup>';
-            });
-            $screen.find('#repo').html(list.join(''));
+                $screen.find('#repo').html(list.join(''));
+            }
+
+            if (! store.org) {
+                buildList(orgs);
+            } else {
+                octokit.rest.repos.listForAuthenticatedUser().then(({ data }) => {
+
+                    data.forEach(function (repo) {
+                        var orgName = repo.owner.login;
+                        orgs[orgName] = orgs[orgName] || [];
+                        orgs[orgName].push(repo);
+                    });
+
+                    buildList(orgs);
+                });
+            }
         });
 
         // projects only supported for org level
         if (! store.org) {
             $screen.find('#project-container').hide();
 
-            IssueForm.init($screen);
+            setTimeout(() => IssueForm.init($screen), 300);
         } else {
-            org.listProjects(function(err, projects) {
-                if (err) {
-                    alert(err);
-                    return;
+            octokit.graphql(
+                `query listProjects($org: String!, $count: Int = 100, $query: String = "is:open") {
+                    organization(login: $org) {
+                        projects (first: $count, search: $query) {
+                            nodes { number, name }
+                        },
+                        projectsV2 (first: $count, query: $query) {
+                            nodes { number, title }
+                        }
+                    }
+                }`,
+                {
+                  org: store.org,
                 }
-                var list = projects.map(function (project) {
-                    return '<option value="' + store.org + '/' + project.number + '">' + project.name + '</option>';
-                });
-                $screen.find('#project').html('<option>~ optional ~</option>' + list);
+            ).then(data => {
 
-                IssueForm.init($screen);
+                var projects = {
+                    v2: [],
+                    classic: [],
+                };
+                data?.organization?.projectsV2?.nodes?.forEach(function (project) {
+                    projects.v2.push({
+                        number: project.number,
+                        name: project.title
+                    });
+                });
+                data?.organization?.projects?.nodes?.forEach(function (project) {
+                    projects.classic.push(project);
+                });
+
+                var list = Object.keys(projects).map(function (projectType) {
+                    var options = projects[projectType].map(function (project) {
+                        return '<option value="' + store.org + '/' + project.number + '">' + project.name + '</option>';
+                    });
+                    return options.length ? '<optgroup label="' + projectType + '">' + options.join('') + '</optgroup>' : '';
+                });
+                $screen.find('#project').html('<option>~ optional ~</option>' + list.join(''));
+
+                setTimeout(() => IssueForm.init($screen), 300);
             });
         }
 

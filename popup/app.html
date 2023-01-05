@@ -25,7 +25,7 @@
                 <label for="token">Personal Access Token:</label>
                 <input type="text" name="token" id="token" value="{{token}}" required autofocus>
                 <br>
-                <em>Requires <strong>"repo"</strong> &amp; <strong>"read:org"</strong> scopes.</em>
+                <em>Requires <strong>"repo"</strong>, <strong>"read:org"</strong> &amp; <strong>"read:project"</strong> scopes.</em>
                 <br>
                 <a href="https://github.com/settings/tokens" target="_blank">View access tokens</a>
                 | <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Help</a>
@@ -107,7 +107,6 @@
     </script>
 
     <!-- libs -->
-    <script src="./vendor/GitHub.min.js"></script>
     <script src="./vendor/crypto-js.min.js" charset="UTF-8"></script>
     <script src="./vendor/zepto.js"></script>
     <script src="./vendor/download2.js"></script>
