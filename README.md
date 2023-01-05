@@ -23,11 +23,22 @@ Features:
 
 A few ideas:
 
+- ~~Upgrade to use the new github projects api~~
 - Support projects at a repo level too
 - Select labels based on ones for selected repo
 - Allow setting issue templates (currently hardcoded)
 - Screenshot hosting, (currently it downloads and you drag it back in manually)
 - Better oauth flow to avoid personal access key usage
+
+-------
+
+Local dev:
+
+- Install packages with `npm install`
+- Build js with `npm run build` (or `npm run watch` for dev)
+- Make the zip extension with `make`
+- Locally test the extension in chrome by going to `chrome://extensions/` and loading in this folder as an unpacked extension.
+- When ready, update the version in the manifest.json and then run `make` again to update the zip file, then upload latest version via https://chrome.google.com/webstore/devconsole/
 
 -------
 
