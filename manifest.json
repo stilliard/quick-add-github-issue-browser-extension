@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Quick add issue to GitHub",
     "description": "Open source browser extension/addon for adding issues to Github via a browser button.",
-    "version": "1.5",
+    "version": "1.6",
     "action": {
       "browser_style": true,
       "default_icon": {
