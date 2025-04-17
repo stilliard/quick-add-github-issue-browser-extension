@@ -73,9 +73,6 @@ Screen.onShow('report-issue', function ($screen) {
             octokit.graphql(
                 `query listProjects($org: String!, $count: Int = 100, $query: String = "is:open") {
                     organization(login: $org) {
-                        projects (first: $count, search: $query) {
-                            nodes { number, name }
-                        },
                         projectsV2 (first: $count, query: $query) {
                             nodes { number, title }
                         }
