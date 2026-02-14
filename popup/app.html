@@ -97,6 +97,11 @@
                 <input type="text" name="title" id="title" placeholder="Title your issue" required autofocus>
             </p>
 
+            <div class="form-floating mb-3" id="description-container">
+                <textarea class="form-control" placeholder="Describe the issue" id="description" name="description" style="height: 120px"></textarea>
+                <label for="description">Description (optional)</label>
+            </div>
+
             <p>
                 <label for="repo">Repo:</label>
                 <select name="repo" id="repo" required>

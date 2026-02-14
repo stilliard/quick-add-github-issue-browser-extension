@@ -32,10 +32,11 @@ describe('github-core', () => {
         expect(url).toContain('body=Hello');
     });
 
-    it('createGitHubIssueDraft builds URL and indicates screenshot capture', () => {
+    it('createGitHubIssueDraft builds URL, includes description, and indicates screenshot capture', () => {
         const draft = createGitHubIssueDraft({
             repoFullName: 'octo/repo',
             title: 'T',
+            description: 'Desc',
             project: '',
             issueType: 'enhancement',
             includeUrl: true,
@@ -52,6 +53,7 @@ describe('github-core', () => {
 
         expect(draft.url).toContain('https://github.com/octo/repo/issues/new');
         expect(draft.url).toContain('labels=enhancement');
+        expect(draft.url).toContain('Desc');
         expect(draft.shouldCaptureScreenshot).toBe(true);
     });
 

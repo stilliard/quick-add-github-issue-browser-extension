@@ -20,9 +20,10 @@ describe('gitea-issue-core', () => {
         expect(invalid).toEqual({ owner: '', repo: '' });
     });
 
-    it('builds issue body with optional sections', () => {
+    it('builds issue body with optional sections and description', () => {
         const body = buildIssueBody({
             issueType: 'bug',
+            description: 'Desc line',
             includeUrl: true,
             includeDebug: true,
             includeScreenshot: true,
@@ -36,6 +37,7 @@ describe('gitea-issue-core', () => {
         });
 
         expect(body).toContain('### Issue description:');
+        expect(body).toContain('Desc line');
         expect(body).toContain('Reported from: https://example.com');
         expect(body).toContain('### Debug details:');
         expect(body).toContain('### Screenshot:');
@@ -56,6 +58,7 @@ describe('gitea-issue-core', () => {
             repoFullName: 'octo/repo',
             title: 'My title',
             issueType: 'enhancement',
+            description: 'My desc',
             includeUrl: false,
             includeDebug: false,
             includeScreenshot: true,
@@ -67,6 +70,7 @@ describe('gitea-issue-core', () => {
         expect(params.title).toBe('My title');
         expect(params.labels).toEqual([5, 6]);
         expect(params.body).toContain('### Story:');
+        expect(params.body).toContain('My desc');
         expect(params.body).toContain('### Screenshot:');
     });
 

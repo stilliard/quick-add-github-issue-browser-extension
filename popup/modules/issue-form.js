@@ -43,6 +43,15 @@ window.IssueForm = (function () {
                             $input.filter('#' + val).prop('checked', true);
                         }
                     });
+
+                    // restore text inputs and textareas (e.g., description)
+                    $screen.find('input[type="text"], textarea').each(function () {
+                        var $input = $(this),
+                            val = fields[$input.attr('name')];
+                        if (val != undefined) {
+                            $input.val(val);
+                        }
+                    });
                 }
 
                 // watch for field changes
@@ -54,6 +63,12 @@ window.IssueForm = (function () {
                 $screen.find('input[type="radio"]').on('change', function () {
                     var $input = $(this);
                     fields[$input.attr('name')] = $input.attr('id');
+                    chrome.storage.local.set({ fields: JSON.stringify(fields) });
+                });
+
+                $screen.find('input[type="text"], textarea').on('input', function () {
+                    var $input = $(this);
+                    fields[$input.attr('name')] = $input.val();
                     chrome.storage.local.set({ fields: JSON.stringify(fields) });
                 });
             });

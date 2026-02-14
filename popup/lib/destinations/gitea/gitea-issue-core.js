@@ -33,6 +33,12 @@ function buildIssueBody(options) {
         body += buildGitHubIssueTypeTemplate(options.issueType) || '';
     }
 
+    if (options.description) {
+        if (body) body += '\n\n';
+        body += String(options.description);
+        body += '\n\n';
+    }
+
     if (options.includeUrl && options.currentTabUrl) {
         body += 'Reported from: ' + options.currentTabUrl + '\n\n';
     }
@@ -64,6 +70,7 @@ function buildCreateIssueParams(options) {
         title: options.title || '',
         body: buildIssueBody({
             issueType: options.issueType,
+            description: options.description,
             includeUrl: options.includeUrl,
             includeDebug: options.includeDebug,
             includeScreenshot: options.includeScreenshot,

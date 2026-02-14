@@ -118,6 +118,7 @@ function createGiteaDestination() {
             setSubmitState($screen, 'loading');
 
             var title = $screen.find('#title').val();
+            var description = $screen.find('#description').val();
             var repoFullName = $screen.find('#repo').val();
             var issueType = $screen.find('#type_field input[name="type"]:checked').val();
             var includeUrl = $screen.find('#added_url').prop('checked');
@@ -132,6 +133,7 @@ function createGiteaDestination() {
                         var createParams = giteaIssueCore.buildCreateIssueParams({
                             repoFullName: repoFullName,
                             title: title,
+                            description: description,
                             issueType: issueType,
                             includeUrl: includeUrl,
                             includeDebug: includeDebug,
@@ -157,28 +159,46 @@ function createGiteaDestination() {
                             token: store && store.giteaToken,
                         });
 
-                        client.createIssue({
-                            owner: createParams.owner,
-                            repo: createParams.repo,
-                            title: createParams.title,
-                            body: createParams.body,
-                            labels: createParams.labels,
-                        }).then(function (issue) {
-                            var issueUrl = giteaIssueCore.buildIssueUrl(issue, {
-                                apiBaseUrl: client.apiBaseUrl,
+                        function performCreate() {
+                            client.createIssue({
                                 owner: createParams.owner,
                                 repo: createParams.repo,
-                            }) || '';
+                                title: createParams.title,
+                                body: createParams.body,
+                                labels: createParams.labels,
+                            }).then(function (issue) {
+                                var issueUrl = giteaIssueCore.buildIssueUrl(issue, {
+                                    apiBaseUrl: client.apiBaseUrl,
+                                    owner: createParams.owner,
+                                    repo: createParams.repo,
+                                }) || '';
 
-                            Screen.show('success', {
-                                destinationName: 'Gitea',
-                                issueUrlHref: issueUrl,
-                                issueUrlText: issueUrl || 'View issue',
-                                issueUrlCopy: issueUrl,
+                                Screen.show('success', {
+                                    destinationName: 'Gitea',
+                                    issueUrlHref: issueUrl,
+                                    issueUrlText: issueUrl || 'View issue',
+                                    issueUrlCopy: issueUrl,
+                                });
+                            }).catch(function (err) {
+                                setSubmitState($screen, 'idle');
+                                showSubmitError($screen, err && err.message ? err.message : 'Failed to create issue.');
                             });
-                        }).catch(function (err) {
-                            setSubmitState($screen, 'idle');
-                            showSubmitError($screen, err && err.message ? err.message : 'Failed to create issue.');
+                        }
+
+                        if (!includeScreenshot || !chrome || !chrome.tabs || !chrome.tabs.captureVisibleTab) {
+                            performCreate();
+                            return;
+                        }
+
+                        chrome.tabs.captureVisibleTab(function (imageUri) {
+                            if (imageUri) {
+                                try {
+                                    download(imageUri, 'screenshot.png');
+                                } catch (e) {
+                                    // ignore download errors, still proceed
+                                }
+                            }
+                            setTimeout(performCreate, 300);
                         });
                     } catch (err) {
                         setSubmitState($screen, 'idle');

@@ -109,6 +109,7 @@ function createGitHubDestination(deps) {
             e.preventDefault();
 
             const title = $screen.find('#title').val();
+            const description = $screen.find('#description').val();
             const repoFullName = $screen.find('#repo').val();
             const project = $screen.find('#project').val();
             const includeUrl = $screen.find('#added_url').prop('checked');
@@ -121,6 +122,7 @@ function createGitHubDestination(deps) {
 
                 const draft = createGitHubIssueDraft({
                     title: title,
+                    description: description,
                     repoFullName: repoFullName,
                     project: project,
                     issueType: issueType,

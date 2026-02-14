@@ -95,6 +95,7 @@ function createGitHubIssueDraft(params) {
     const includeUrl = params.includeUrl;
     const includeDebug = params.includeDebug;
     const includeScreenshot = params.includeScreenshot;
+    const description = params.description;
     const currentTabUrl = params.currentTabUrl;
     const env = params.env || {};
 
@@ -104,6 +105,11 @@ function createGitHubIssueDraft(params) {
     if (issueType) {
         labels = issueType;
         body += buildGitHubIssueTypeTemplate(issueType);
+    }
+
+    if (description) {
+        if (body) body += '\n\n';
+        body += String(description);
     }
 
     if (includeUrl && currentTabUrl) {
