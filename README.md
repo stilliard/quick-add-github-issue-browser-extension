@@ -1,9 +1,9 @@
 
-# Browser extension to quickly report issues to GitHub
+# Browser extension to quickly report issues to GitHub **and Gitea**
 
 ![screenshot](./images/screenshot.png)
 
-**Make sure you have setup your popup/config.js first!** - copy the popup/config.js.example to popup/config.js and set a secret for it to work.
+**Setup required:** copy `popup/config.js.example` to `popup/config.js` and set a random secret (used to encrypt settings in `chrome.storage.local`). Do **not** commit this file.
 
 Supports Chrome & Firefox.
 
@@ -11,34 +11,43 @@ Supports Chrome & Firefox.
 - [Firefox Addon](https://addons.mozilla.org/en-GB/firefox/addon/quick-add-issue-to-github/)
 
 Features:
-- Sending issues to github
-- Select a repo based on your user or set a specific org.
-- When using a specific org you can also set an org project.
-- Set issue type/labels
-- Bugs/enhancements also currently come with a issue template.
-- Screenshot support
-- Url & debug info (such as browser UA, etc.)
+- **Destinations:** GitHub (existing) and Gitea (new)
+- **Repo selection:**
+  - GitHub: user repos + optional org repos; org projects (projects V2) when org is set
+  - Gitea: user repos + optional org repos, merged/deduped and grouped by owner
+- **Labels:**
+  - GitHub: issue type labels (bug/enhancement) via URL params
+  - Gitea: label picker modal with search and per-repo caching; applies label IDs via API
+- **Issue templates:** bug/enhancement body scaffolds
+- **Extras:** optional URL, debug info, and screenshot download placeholder
+- **Success flow:**
+  - GitHub: opens the prefilled issue page in a new tab
+  - Gitea: creates the issue via API and shows a success screen with a copyable link (no auto-open tab)
 
 ------
 
-A few ideas:
-
-- ~~Upgrade to use the new github projects api~~
-- Support projects at a repo level too
-- Select labels based on ones for selected repo
-- Allow setting issue templates (currently hardcoded)
-- Screenshot hosting, (currently it downloads and you drag it back in manually)
-- Better oauth flow to avoid personal access key usage
+A few ideas / next steps:
+- Support repo-level projects (GitHub) and Gitea projects/milestones (currently not implemented)
+- Better OAuth flow (today uses PAT/token)
+- Screenshot hosting/auto-attach instead of manual download/drag
+- Allow custom issue templates per destination
 
 -------
 
 Local dev:
 
 - Install packages with `npm install`
-- Build js with `npm run build` (or `npm run watch` for dev)
-- Make the zip extension with `make`
-- Locally test the extension in chrome by going to `chrome://extensions/` and loading in this folder as an unpacked extension.
-- When ready, update the version in the manifest.json and then run `make` again to update the zip file, then upload latest version via https://chrome.google.com/webstore/devconsole/
+- Build bundled JS: `npm run build` (or `npm run watch`)
+- Tests: `npm test` (Vitest)
+- Package zip: `make` (requires `web-ext` installed globally)
+- Load unpacked for Chrome: `chrome://extensions` → “Load unpacked” → repo root
+- Load temporary add-on for Firefox: `about:debugging` → “This Firefox” → “Load Temporary Add-on” → choose `manifest.json`
+
+Gitea usage notes:
+- Settings: choose destination **Gitea**, set **Base URL**, **Token**, and optionally **Org**. Host permissions are broad (`*://*/*`) so self-hosted Gitea works without manifest changes.
+- Repo dropdown loads user + org repos, merged/deduped.
+- “Choose labels…” opens a Bootstrap modal to search/select labels (IDs are sent to Gitea).
+- Submit creates the issue via API; success screen shows the new issue link and a “Copy link” button (no tab open).
 
 -------
 
