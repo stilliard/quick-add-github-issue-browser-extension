@@ -17,12 +17,23 @@ window.IssueForm = (function () {
 
                 // restore field state
                 if (result.fields) {
-                    fields = JSON.parse(result.fields);
+                    try {
+                        fields = JSON.parse(result.fields) || {};
+                    } catch (e) {
+                        fields = {};
+                    }
                     $screen.find('select').each(function () {
                         var $input = $(this),
                             val = fields[$input.attr('name')];
                         if (val != undefined) {
-                            $input.val(val).trigger('change');
+                            var desired = String(val);
+                            $input.val(desired);
+
+                            // Only trigger change when the value actually exists in the dropdown.
+                            // This prevents overwriting persisted state when options haven't loaded yet.
+                            if (String($input.val() || '') === desired) {
+                                $input.trigger('change');
+                            }
                         }
                     });
                     $screen.find('input[type="radio"]').each(function () {

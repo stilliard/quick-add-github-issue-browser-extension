@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Issue</title>
     <link rel="stylesheet" href="./fonts.css">
+    <link rel="stylesheet" href="./vendor/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="./app.css">
 </head>
 <body>
@@ -21,22 +22,59 @@
                 <h1>Extension Settings</h1>
             </header>
 
-            <p>
-                <label for="token">Personal Access Token:</label>
-                <input type="text" name="token" id="token" value="{{token}}" required autofocus>
-                <br>
-                <em>Requires <strong>"repo"</strong>, <strong>"read:org"</strong> &amp; <strong>"read:project"</strong> scopes.</em>
-                <br>
-                <a href="https://github.com/settings/tokens" target="_blank">View access tokens</a>
-                | <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Help</a>
-            </p>
+            <div id="settings-error" class="alert alert-danger d-none" role="alert"></div>
 
             <p>
-                <label for="org">Org name:</label>
-                <input type="text" name="org" id="org" value="{{org}}" placeholder="(optional)">
+                <label for="destination">Destination:</label>
+                <select name="destination" id="destination" data-saved-destination="{{destination}}" required>
+                    <option value="github">GitHub</option>
+                    <option value="gitea">Gitea</option>
+                </select>
                 <br>
-                <em>e.g. github.com/<strong>MyCompany</strong>/repo. Leave blank to use your user instead.</em>
+                <em>Choose where issues should be created.</em>
             </p>
+
+            <div id="github-settings">
+                <p>
+                    <label for="token">GitHub Personal Access Token:</label>
+                    <input type="text" name="token" id="token" value="{{token}}" autofocus>
+                    <br>
+                    <em>Requires <strong>"repo"</strong>, <strong>"read:org"</strong> &amp; <strong>"read:project"</strong> scopes.</em>
+                    <br>
+                    <a href="https://github.com/settings/tokens" target="_blank">View access tokens</a>
+                    | <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#creating-a-token" target="_blank">Help</a>
+                </p>
+
+                <p>
+                    <label for="org">GitHub org name:</label>
+                    <input type="text" name="org" id="org" value="{{org}}" placeholder="(optional)">
+                    <br>
+                    <em>e.g. github.com/<strong>MyCompany</strong>/repo. Leave blank to use your user instead.</em>
+                </p>
+            </div>
+
+            <div id="gitea-settings" class="d-none">
+                <p>
+                    <label for="gitea_base_url">Gitea base URL:</label>
+                    <input type="text" name="gitea_base_url" id="gitea_base_url" value="{{giteaBaseUrl}}" placeholder="https://gitea.example.com">
+                    <br>
+                    <em>Your Gitea server URL (no <strong>/api/v1</strong> needed).</em>
+                </p>
+
+                <p>
+                    <label for="gitea_token">Gitea Personal Access Token:</label>
+                    <input type="text" name="gitea_token" id="gitea_token" value="{{giteaToken}}">
+                    <br>
+                    <em>Used for authenticating to the Gitea API.</em>
+                </p>
+
+                <p>
+                    <label for="gitea_org">Gitea org name:</label>
+                    <input type="text" name="gitea_org" id="gitea_org" value="{{giteaOrg}}" placeholder="(optional)">
+                    <br>
+                    <em>Optional. When set, org repos will be listed along with your user repos.</em>
+                </p>
+            </div>
 
             <p><input type="submit" value="Save"></p>
 
@@ -52,6 +90,8 @@
                 <h1>Quick Add Issue</h1>
             </header>
 
+            <div id="submit-error" class="alert alert-danger d-none" role="alert"></div>
+
             <p>
                 <label for="title">Title:</label>
                 <input type="text" name="title" id="title" placeholder="Title your issue" required autofocus>
@@ -63,6 +103,43 @@
                     <option>loading...</option>
                 </select>
             </p>
+
+            <!-- Gitea-only: labels picker -->
+            <div id="gitea-labels-container" class="d-none">
+                <p>
+                    <label>Labels:</label>
+                    <br>
+                    <button type="button" id="gitea-labels-button" class="btn btn-sm btn-outline-secondary">
+                        Choose labels…
+                    </button>
+                </p>
+
+                <div id="gitea-selected-labels" style="margin-bottom: 10px;"></div>
+
+                <div class="modal fade" id="gitea-labels-modal" tabindex="-1" aria-labelledby="gitea-labels-modal-title" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="gitea-labels-modal-title">Choose labels</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-2">
+                                    <input type="text" class="form-control" id="gitea-labels-search" placeholder="Search labels…" autocomplete="off">
+                                </div>
+
+                                <div id="gitea-labels-error" class="alert alert-danger d-none" role="alert"></div>
+
+                                <div id="gitea-labels-list" class="list-group"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="gitea-labels-apply">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <p id="project-container">
                 <label for="project">Project:</label>
@@ -106,10 +183,40 @@
         </div>
     </script>
 
+    <!-- success screen -->
+    <script type="text/x-template" id="success-template">
+        <div id="success-screen">
+            <header>
+                <a href="https://github.com/" target="_blank" class="logo-img"><img src="./images/github.svg"></a>
+                <h1>Issue created</h1>
+            </header>
+
+            <div class="alert alert-success" role="alert">
+                Issue created on {{destinationName}}!
+            </div>
+
+            <p>
+                <label>Issue link:</label>
+                <br>
+                <a id="created-issue-link" href="{{issueUrlHref}}" target="_blank" rel="noreferrer">{{issueUrlText}}</a>
+            </p>
+
+            <div class="d-flex" style="gap: 8px;">
+                <button type="button" class="btn btn-primary" id="copy-issue-link" data-issue-url="{{issueUrlCopy}}">Copy link</button>
+                <button type="button" class="btn btn-secondary" id="create-another-issue">Create another</button>
+            </div>
+
+            <div class="mt-3">
+                <a id="success-settings-link">Extension Settings</a>
+            </div>
+        </div>
+    </script>
+
     <!-- libs -->
     <script src="./vendor/crypto-js.min.js" charset="UTF-8"></script>
     <script src="./vendor/zepto.js"></script>
     <script src="./vendor/download2.js"></script>
+    <script src="./vendor/bootstrap/bootstrap.bundle.min.js"></script>
 
     <!-- modules -->
     <script src="./modules/settings.js"></script>

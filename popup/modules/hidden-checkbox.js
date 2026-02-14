@@ -8,8 +8,6 @@ $('body').on('keypress', '.hidden-checkbox-label', function (e) {
     var enterKeyCode = 13,
     spaceKeyCode = 32;
 
-    console.log('Pressed: ', e.which);
-
     if (e.which == enterKeyCode || e.which == spaceKeyCode) {
         e.preventDefault();
         $(this).click();

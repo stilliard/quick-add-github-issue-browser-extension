@@ -1,12 +1,15 @@
 
 /* ==== Base ==== */
 
-* { margin: 0; padding: 0; }
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
 body {
     width: 360px;
     padding: 10px;
     background-color: #F6F8FA;
+    margin: 0;
 }
 body, input, select {
     font: 14px/1.5 'Noto Sans', sans-serif;
@@ -60,6 +63,7 @@ header {
 header h1 {
     font-size: 16px;
     color: #FFF;
+    margin: 0;
 }
 header .logo-img {
     float: right;

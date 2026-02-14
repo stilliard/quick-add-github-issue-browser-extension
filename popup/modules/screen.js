@@ -23,7 +23,8 @@ window.Screen = (function () {
 
     templates = {
         settings: compileTemplate($('#settings-template').html()),
-        'report-issue': compileTemplate($('#report-issue-template').html())
+        'report-issue': compileTemplate($('#report-issue-template').html()),
+        success: compileTemplate($('#success-template').html())
     };
 
     return {

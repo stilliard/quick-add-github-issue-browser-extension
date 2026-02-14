@@ -17,7 +17,52 @@ window.Settings = (function () {
     function decrypt(str) {
         var data = window.CryptoJS.AES.decrypt(str.toString(), secret).toString(window.CryptoJS.enc.Utf8);
         if (! data) return {};
-        return JSON.parse(data);
+
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            // corrupted or incompatible payload; treat as empty settings
+            return {};
+        }
+    }
+
+    function normalizeSettingsStore(settings) {
+        if (!settings || typeof settings !== 'object') {
+            return { settings: settings, didMigrate: false };
+        }
+
+        var didMigrate = false;
+        var normalized = Object.assign({}, settings);
+
+        var destination = String(normalized.destination || '').trim().toLowerCase();
+        if (!destination) {
+            destination = 'github';
+            didMigrate = true;
+        }
+        if (destination !== 'github' && destination !== 'gitea') {
+            destination = 'github';
+            didMigrate = true;
+        }
+        if (normalized.destination !== destination) {
+            normalized.destination = destination;
+            didMigrate = true;
+        }
+
+        // Add missing keys for forward compatibility (legacy schema: { token, org })
+        if (normalized.giteaBaseUrl === undefined) {
+            normalized.giteaBaseUrl = '';
+            didMigrate = true;
+        }
+        if (normalized.giteaToken === undefined) {
+            normalized.giteaToken = '';
+            didMigrate = true;
+        }
+        if (normalized.giteaOrg === undefined) {
+            normalized.giteaOrg = '';
+            didMigrate = true;
+        }
+
+        return { settings: normalized, didMigrate: didMigrate };
     }
 
     return {
@@ -39,7 +84,17 @@ window.Settings = (function () {
                     callback(null);
                     return;
                 }
-                cachedData = decrypt(result.settings);
+                var decrypted = decrypt(result.settings);
+                var normalized = normalizeSettingsStore(decrypted);
+                cachedData = normalized.settings;
+
+                // Persist migration in the background (no UI blocking)
+                if (normalized.didMigrate) {
+                    chrome.storage.local.set({ settings: encrypt(cachedData) }, function () {
+                        // ignore errors; settings will still be returned to the caller
+                    });
+                }
+
                 callback(cachedData);
             });
         },
