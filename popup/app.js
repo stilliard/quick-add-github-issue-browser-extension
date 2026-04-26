@@ -28,7 +28,7 @@ Screen.onShow('report-issue', function ($screen) {
         const octokit = new Octokit({ auth: store.token });
 
         const listRepos = store.org ? octokit.rest.repos.listForOrg : octokit.rest.repos.listForAuthenticatedUser;
-        listRepos({ org: store.org }).then(({ data }) => {
+        octokit.paginate(listRepos, { org: store.org, per_page: 100 }).then((data) => {
 
             var orgs = {};
             data.forEach(function (repo) {
@@ -51,7 +51,7 @@ Screen.onShow('report-issue', function ($screen) {
             if (! store.org) {
                 buildList(orgs);
             } else {
-                octokit.rest.repos.listForAuthenticatedUser().then(({ data }) => {
+                octokit.paginate(octokit.rest.repos.listForAuthenticatedUser, { per_page: 100 }).then((data) => {
 
                     data.forEach(function (repo) {
                         var orgName = repo.owner.login;
