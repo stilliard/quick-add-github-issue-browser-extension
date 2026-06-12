@@ -21,6 +21,40 @@ Screen.onShow('settings', function ($screen) {
 // When showing the report-issue screen
 Screen.onShow('report-issue', function ($screen) {
 
+    // load issue types & render the type selector
+    // (issueTypes is kept in scope so the submit handler can look up the selected type)
+    var issueTypes = [];
+    var typesReady = false;
+    var whenTypesReady = null;
+    Types.getAll(function (types) {
+        issueTypes = types;
+
+        var radios = types.map(function (type, i) {
+            // TODO(#15): escape type.name/type.id once users can define their own types
+            var inputId = 'type_' + type.id;
+            return '<input type="radio" name="type" class="hidden-checkbox" '
+                + 'value="' + type.id + '" id="' + inputId + '"' + (i === 0 ? ' checked' : '') + '>'
+                + '<label tabindex="0" role="button" class="hidden-checkbox-label" for="' + inputId + '">'
+                + type.name + '</label>';
+        });
+        $screen.find('#type_options').html(radios.join(''));
+
+        typesReady = true;
+        if (whenTypesReady) { whenTypesReady(); whenTypesReady = null; }
+    });
+
+    // Initialise the form once the type radios exist. IssueForm.init restores the
+    // saved selection & binds (non-delegated) change handlers, so it must not run
+    // before the radios are rendered above. Callers below invoke this after the
+    // repo/project selects are populated; this just adds the "& types ready" gate.
+    function initForm() {
+        if (typesReady) {
+            IssueForm.init($screen);
+        } else {
+            whenTypesReady = function () { IssueForm.init($screen); };
+        }
+    }
+
     // get token
     Settings.get(function (store) {
 
@@ -68,7 +102,7 @@ Screen.onShow('report-issue', function ($screen) {
         if (! store.org) {
             $screen.find('#project-container').hide();
 
-            setTimeout(() => IssueForm.init($screen), 300);
+            setTimeout(initForm, 300);
         } else {
             octokit.graphql(
                 `query listProjects($org: String!, $count: Int = 100, $query: String = "is:open") {
@@ -105,7 +139,7 @@ Screen.onShow('report-issue', function ($screen) {
                 });
                 $screen.find('#project').html('<option>~ optional ~</option>' + list.join(''));
 
-                setTimeout(() => IssueForm.init($screen), 300);
+                setTimeout(initForm, 300);
             });
         }
 
@@ -126,7 +160,8 @@ Screen.onShow('report-issue', function ($screen) {
                 added_url = $screen.find('#added_url').prop('checked'),
                 added_screenshot = $screen.find('#added_screenshot').prop('checked'),
                 added_debug = $screen.find('#added_debug').prop('checked'),
-                type_field = $screen.find('#type_field input[name="type"]:checked').val(),
+                type_id = $screen.find('#type_field input[name="type"]:checked').val(),
+                selectedType = Types.find(issueTypes, type_id),
                 body = '',
                 url = 'https://github.com/' + repo + '/issues/new?title=' + encodeURIComponent(title);
 
@@ -148,37 +183,22 @@ Screen.onShow('report-issue', function ($screen) {
                     });
                 };
 
-                // add type/label + standard template ;D
-                if (type_field) {
-                    url += '&labels=' + encodeURIComponent(type_field);
+                // add the selected type's GitHub issue type, default labels & body template
+                if (selectedType) {
 
-                    if (type_field=='bug') {
-                        body += "### Issue description:\n";
-                        body += "\n";
-                        body += "As a User/Admin/Developer\n";
-                        body += "When I <steps to reproduce>\n";
-                        body += "Currently it <what happens currently>\n";
-                        body += "While it should <what should happen>\n";
-                        body += "Because <some business value>\n";
-                        body += "\n\n";
+                    // GitHub native Issue Type (org-level; ignored where unsupported)
+                    if (selectedType.githubType) {
+                        url += '&type=' + encodeURIComponent(selectedType.githubType);
                     }
-                    else if (type_field=='enhancement') {
-                        body += "### Story:\n";
-                        body += "\n";
-                        body += "As a User/Admin/Developer\n";
-                        body += "I want <some software feature>\n";
-                        body += "So that <some business value>\n";
-                        body += "\n";
-                        body += "### Requirements:\n";
-                        body += "\n";
-                        body += "- list them here\n";
-                        body += "\n";
-                        body += "### Tasks:\n";
-                        body += "\n";
-                        body += "- [ ] \n";
-                        body += "- [ ] \n";
-                        body += "- [ ] \n";
-                        body += "\n\n";
+
+                    // default labels (supports multiple)
+                    if (selectedType.labels && selectedType.labels.length) {
+                        url += '&labels=' + selectedType.labels.map(encodeURIComponent).join(',');
+                    }
+
+                    // body template
+                    if (selectedType.bodyTemplate) {
+                        body += selectedType.bodyTemplate;
                     }
                 }
 
