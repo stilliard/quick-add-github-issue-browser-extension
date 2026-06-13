@@ -8,8 +8,9 @@
 //   - labels:       default labels applied via &labels= (supports multiple)
 //   - bodyTemplate: the markdown prefilled into the issue body
 //
-// Stored in chrome.storage.local under `types`, seeded with the defaults below on
-// first use. CRUD/editing of types is handled separately (see issue #15).
+// For now the defaults below are the single source of truth, so every user gets
+// the latest. User-customised types (stored in chrome.storage) arrive with the
+// management UI in issue #15.
 //
 
 window.Types = (function () {
@@ -75,38 +76,11 @@ window.Types = (function () {
         }
     ];
 
-    // persist the full set of types
-    // @param {Array} types
-    // @param {Function} [callback] when saved
-    function saveAll(types, callback) {
-        chrome.storage.local.set({ types: JSON.stringify(types) }, function () {
-            if (callback) callback();
-        });
-    }
-
-    // get all types, seeding storage with the defaults on first use
+    // get all types — just the code defaults for now. Callback-style because #15
+    // will read user-customised types from chrome.storage (async) here.
     // @param {Function} callback gets given the Array of types
     function getAll(callback) {
-        chrome.storage.local.get(['types'], function (result) {
-            if (result.types) {
-                // the store can be hand-edited (devtools) so parse defensively;
-                // fall through to reseed defaults on corrupt/unexpected data
-                var parsed = null;
-                try {
-                    parsed = JSON.parse(result.types);
-                } catch (e) {
-                    parsed = null;
-                }
-                if (Array.isArray(parsed) && parsed.length) {
-                    callback(parsed);
-                    return;
-                }
-            }
-            // first use (or recovery): seed storage with the defaults
-            saveAll(DEFAULTS, function () {
-                callback(DEFAULTS);
-            });
-        });
+        callback(DEFAULTS);
     }
 
     // find a single type by its id
@@ -119,7 +93,6 @@ window.Types = (function () {
     return {
         DEFAULTS: DEFAULTS,
         getAll: getAll,
-        saveAll: saveAll,
         find: find
     }
 

@@ -24,15 +24,13 @@ Screen.onShow('report-issue', function ($screen) {
     // load issue types & render the type selector
     // (issueTypes is kept in scope so the submit handler can look up the selected type)
     var issueTypes = [];
-    var typesReady = false;
-    var whenTypesReady = null;
     Types.getAll(function (types) {
         issueTypes = types;
 
-        // Build the radios with DOM APIs (not string concat) so a type's name/id —
-        // which can be hand-edited in chrome.storage — can't inject markup or break
-        // the DOM. The label text is set via .text(); the element id is normalised
-        // while the radio value keeps the real id (used by Types.find on submit).
+        // Build the radios with DOM APIs (not string concat) and set the label via
+        // .text(), so a type name can't inject markup once users can name their own
+        // types (#15). The element id is normalised; the radio value keeps the real
+        // id (used by Types.find on submit).
         var $options = $screen.find('#type_options').empty();
         types.forEach(function (type, i) {
             var inputId = 'type_' + String(type.id).replace(/[^A-Za-z0-9_-]/g, '-');
@@ -48,22 +46,7 @@ Screen.onShow('report-issue', function ($screen) {
             // groups (whose spacing comes from markup whitespace)
             $options.append($input).append($label).append(document.createTextNode(' '));
         });
-
-        typesReady = true;
-        if (whenTypesReady) { whenTypesReady(); whenTypesReady = null; }
     });
-
-    // Initialise the form once the type radios exist. IssueForm.init restores the
-    // saved selection & binds (non-delegated) change handlers, so it must not run
-    // before the radios are rendered above. Callers below invoke this after the
-    // repo/project selects are populated; this just adds the "& types ready" gate.
-    function initForm() {
-        if (typesReady) {
-            IssueForm.init($screen);
-        } else {
-            whenTypesReady = function () { IssueForm.init($screen); };
-        }
-    }
 
     // get token
     Settings.get(function (store) {
@@ -112,7 +95,7 @@ Screen.onShow('report-issue', function ($screen) {
         if (! store.org) {
             $screen.find('#project-container').hide();
 
-            setTimeout(initForm, 300);
+            setTimeout(() => IssueForm.init($screen), 300);
         } else {
             octokit.graphql(
                 `query listProjects($org: String!, $count: Int = 100, $query: String = "is:open") {
@@ -149,7 +132,7 @@ Screen.onShow('report-issue', function ($screen) {
                 });
                 $screen.find('#project').html('<option>~ optional ~</option>' + list.join(''));
 
-                setTimeout(initForm, 300);
+                setTimeout(() => IssueForm.init($screen), 300);
             });
         }
 
