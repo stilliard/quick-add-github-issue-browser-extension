@@ -29,15 +29,25 @@ Screen.onShow('report-issue', function ($screen) {
     Types.getAll(function (types) {
         issueTypes = types;
 
-        var radios = types.map(function (type, i) {
-            // TODO(#15): escape type.name/type.id once users can define their own types
-            var inputId = 'type_' + type.id;
-            return '<input type="radio" name="type" class="hidden-checkbox" '
-                + 'value="' + type.id + '" id="' + inputId + '"' + (i === 0 ? ' checked' : '') + '>'
-                + '<label tabindex="0" role="button" class="hidden-checkbox-label" for="' + inputId + '">'
-                + type.name + '</label>';
+        // Build the radios with DOM APIs (not string concat) so a type's name/id —
+        // which can be hand-edited in chrome.storage — can't inject markup or break
+        // the DOM. The label text is set via .text(); the element id is normalised
+        // while the radio value keeps the real id (used by Types.find on submit).
+        var $options = $screen.find('#type_options').empty();
+        types.forEach(function (type, i) {
+            var inputId = 'type_' + String(type.id).replace(/[^A-Za-z0-9_-]/g, '-');
+            var $input = $('<input>')
+                .attr({ type: 'radio', name: 'type', id: inputId, value: type.id })
+                .addClass('hidden-checkbox')
+                .prop('checked', i === 0);
+            var $label = $('<label>')
+                .attr({ tabindex: 0, role: 'button', 'for': inputId })
+                .addClass('hidden-checkbox-label')
+                .text(type.name);
+            // trailing space gives the same inter-button gap as the other radio
+            // groups (whose spacing comes from markup whitespace)
+            $options.append($input).append($label).append(document.createTextNode(' '));
         });
-        $screen.find('#type_options').html(radios.join(''));
 
         typesReady = true;
         if (whenTypesReady) { whenTypesReady(); whenTypesReady = null; }
@@ -161,7 +171,9 @@ Screen.onShow('report-issue', function ($screen) {
                 added_screenshot = $screen.find('#added_screenshot').prop('checked'),
                 added_debug = $screen.find('#added_debug').prop('checked'),
                 type_id = $screen.find('#type_field input[name="type"]:checked').val(),
-                selectedType = Types.find(issueTypes, type_id),
+                // fall back to the first (default) type if none is checked, matching
+                // the pre-selected radio the UI shows
+                selectedType = Types.find(issueTypes, type_id) || issueTypes[0],
                 body = '',
                 url = 'https://github.com/' + repo + '/issues/new?title=' + encodeURIComponent(title);
 

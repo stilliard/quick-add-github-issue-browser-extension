@@ -91,10 +91,20 @@ window.Types = (function () {
     function getAll(callback) {
         chrome.storage.local.get(['types'], function (result) {
             if (result.types) {
-                callback(JSON.parse(result.types));
-                return;
+                // the store can be hand-edited (devtools) so parse defensively;
+                // fall through to reseed defaults on corrupt/unexpected data
+                var parsed = null;
+                try {
+                    parsed = JSON.parse(result.types);
+                } catch (e) {
+                    parsed = null;
+                }
+                if (Array.isArray(parsed) && parsed.length) {
+                    callback(parsed);
+                    return;
+                }
             }
-            // first use: seed storage with the defaults
+            // first use (or recovery): seed storage with the defaults
             saveAll(DEFAULTS, function () {
                 callback(DEFAULTS);
             });
