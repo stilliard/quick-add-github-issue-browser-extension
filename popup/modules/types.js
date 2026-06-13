@@ -36,9 +36,8 @@ window.Types = (function () {
         "I want <some software feature>\n" +
         "So that <some business value>\n" +
         "\n" +
-        "### Requirements:\n" +
+        "### Requirements: <!-- context & key features needed, links to support tickets, quotes, docs, etc. -->\n" +
         "\n" +
-        "<!-- context & key features needed: links to support tickets, quotes, docs + the features required -->\n" +
         "- \n" +
         "\n" +
         "### Tasks:\n" +
@@ -47,9 +46,8 @@ window.Types = (function () {
         "- [ ] \n" +
         "- [ ] \n" +
         "\n" +
-        "### Acceptance criteria:\n" +
+        "### Acceptance criteria: <!-- how we validate it's done, e.g. key checks/tests -->\n" +
         "\n" +
-        "<!-- how we validate it's done, e.g. checks/tests that should pass -->\n" +
         "- [ ] \n" +
         "\n\n";
 
