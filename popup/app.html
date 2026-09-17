@@ -72,16 +72,9 @@
             </p>
 
             <p id="type_field">
-                <label>Issue type:</label>
+                <label>Type:</label>
                 <br>
-                <input type="radio" value="bug" name="type" id="type_bug" class="hidden-checkbox" checked>
-                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_bug">Bug</label>
-
-                <input type="radio" value="enhancement" name="type" id="type_enhancement" class="hidden-checkbox">
-                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_enhancement">Enhancement</label>
-
-                <input type="radio" value="" name="type" id="type_other" class="hidden-checkbox">
-                <label tabindex="0" role="button" class="hidden-checkbox-label" for="type_other">Other</label>
+                <span id="type_options">loading...</span>
             </p>
 
             <p>
@@ -113,6 +106,7 @@
 
     <!-- modules -->
     <script src="./modules/settings.js"></script>
+    <script src="./modules/types.js"></script>
     <script src="./modules/issue-form.js"></script>
     <script src="./modules/screen.js"></script>
     <script src="./modules/hidden-checkbox.js"></script>

@@ -21,6 +21,33 @@ Screen.onShow('settings', function ($screen) {
 // When showing the report-issue screen
 Screen.onShow('report-issue', function ($screen) {
 
+    // load issue types & render the type selector
+    // (issueTypes is kept in scope so the submit handler can look up the selected type)
+    var issueTypes = [];
+    Types.getAll(function (types) {
+        issueTypes = types;
+
+        // Build the radios with DOM APIs (not string concat) and set the label via
+        // .text(), so a type name can't inject markup once users can name their own
+        // types (#15). The element id is normalised; the radio value keeps the real
+        // id (used by Types.find on submit).
+        var $options = $screen.find('#type_options').empty();
+        types.forEach(function (type, i) {
+            var inputId = 'type_' + String(type.id).replace(/[^A-Za-z0-9_-]/g, '-');
+            var $input = $('<input>')
+                .attr({ type: 'radio', name: 'type', id: inputId, value: type.id })
+                .addClass('hidden-checkbox')
+                .prop('checked', i === 0);
+            var $label = $('<label>')
+                .attr({ tabindex: 0, role: 'button', 'for': inputId })
+                .addClass('hidden-checkbox-label')
+                .text(type.name);
+            // trailing space gives the same inter-button gap as the other radio
+            // groups (whose spacing comes from markup whitespace)
+            $options.append($input).append($label).append(document.createTextNode(' '));
+        });
+    });
+
     // get token
     Settings.get(function (store) {
 
@@ -126,7 +153,10 @@ Screen.onShow('report-issue', function ($screen) {
                 added_url = $screen.find('#added_url').prop('checked'),
                 added_screenshot = $screen.find('#added_screenshot').prop('checked'),
                 added_debug = $screen.find('#added_debug').prop('checked'),
-                type_field = $screen.find('#type_field input[name="type"]:checked').val(),
+                type_id = $screen.find('#type_field input[name="type"]:checked').val(),
+                // fall back to the first (default) type if none is checked, matching
+                // the pre-selected radio the UI shows
+                selectedType = Types.find(issueTypes, type_id) || issueTypes[0],
                 body = '',
                 url = 'https://github.com/' + repo + '/issues/new?title=' + encodeURIComponent(title);
 
@@ -148,37 +178,22 @@ Screen.onShow('report-issue', function ($screen) {
                     });
                 };
 
-                // add type/label + standard template ;D
-                if (type_field) {
-                    url += '&labels=' + encodeURIComponent(type_field);
+                // add the selected type's GitHub issue type, default labels & body template
+                if (selectedType) {
 
-                    if (type_field=='bug') {
-                        body += "### Issue description:\n";
-                        body += "\n";
-                        body += "As a User/Admin/Developer\n";
-                        body += "When I <steps to reproduce>\n";
-                        body += "Currently it <what happens currently>\n";
-                        body += "While it should <what should happen>\n";
-                        body += "Because <some business value>\n";
-                        body += "\n\n";
+                    // GitHub native Issue Type (org-level; ignored where unsupported)
+                    if (selectedType.githubType) {
+                        url += '&type=' + encodeURIComponent(selectedType.githubType);
                     }
-                    else if (type_field=='enhancement') {
-                        body += "### Story:\n";
-                        body += "\n";
-                        body += "As a User/Admin/Developer\n";
-                        body += "I want <some software feature>\n";
-                        body += "So that <some business value>\n";
-                        body += "\n";
-                        body += "### Requirements:\n";
-                        body += "\n";
-                        body += "- list them here\n";
-                        body += "\n";
-                        body += "### Tasks:\n";
-                        body += "\n";
-                        body += "- [ ] \n";
-                        body += "- [ ] \n";
-                        body += "- [ ] \n";
-                        body += "\n\n";
+
+                    // default labels (supports multiple)
+                    if (selectedType.labels && selectedType.labels.length) {
+                        url += '&labels=' + selectedType.labels.map(encodeURIComponent).join(',');
+                    }
+
+                    // body template
+                    if (selectedType.bodyTemplate) {
+                        body += selectedType.bodyTemplate;
                     }
                 }
 
